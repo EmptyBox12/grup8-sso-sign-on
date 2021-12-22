@@ -1,23 +1,47 @@
-import logo from './logo.svg';
+import { useCookies } from "react-cookie";
+import { useState, useEffect } from "react";
+import axios from 'axios';
 import './App.css';
 
 function App() {
+  const [cookies] = useCookies(["accessToken"]);
+  const [userInfo, setUserInfo] = useState(null);
+
+  useEffect(() => {
+      (async function checkCookie() {
+        if (cookies.accessToken) {
+          try {
+            let response = await axios.post(
+              "http://localhost:3001/verifyToken/",
+              {
+                token: cookies.accessToken,
+              }
+            );
+            if(response.data.status === "success"){
+              setUserInfo({
+                name:"Ataberk",
+                surname:"Tümay",
+                email:"fındık@gmail.com",
+              })
+            }
+          } catch (err) {
+            if (err.response.data.status === "fail") {
+              window.location.href = `http://localhost:3000/?redirect${window.location}`;
+            }
+          }
+        }
+      })(); 
+  }, []);
+  
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        {userInfo && 
+          <div>
+            <p>{userInfo.name}</p>
+            <p>{userInfo.surname}</p>
+            <p>{userInfo.email}</p>
+          </div>
+        }
     </div>
   );
 }

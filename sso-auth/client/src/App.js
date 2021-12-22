@@ -19,18 +19,21 @@ function App() {
 
   useEffect(() => {
     if (checkQuery) {
-      console.log("a");
       (async function checkCookie() {
         if (cookies.accessToken) {
-          let response = await axios.post(
-            "http://localhost:3001/verifyToken/",
-            {
-              token: cookies.accessToken,
+          try {
+            let response = await axios.post(
+              "http://localhost:3001/verifyToken/",
+              {
+                token: cookies.accessToken,
+              }
+            );
+            if (response.data.status === "success") {
+              let query = window.location.search.substring(1).split("=")[1];
+              window.location.href = query;
             }
-          );
-          if (response.data.status === "success") {
-            let query = window.location.search.substring(1).split("=")[1];
-            window.location.href = query + `?token=${cookies.accessToken}`;
+          } catch (err) {
+            console.log(err.response.data);
           }
         }
       })();
@@ -51,7 +54,7 @@ function App() {
       let loginInfo = loginData.data;
       if (loginInfo.status === "success") {
         setCookie("accessToken", loginInfo.accessToken, { path: "/" });
-        window.location.href = query + `?token=${loginInfo.accessToken}`;
+        window.location.href = query;
       }
     } catch (err) {
       alert(err.response.data.msg);
