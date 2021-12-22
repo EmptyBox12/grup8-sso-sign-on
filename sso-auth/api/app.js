@@ -1,5 +1,4 @@
 const express = require("express");
-const { v4: uuidv4 } = require("uuid");
 const authRoute = require("./routes/authRoute");
 const app = express();
 const port = 3001;

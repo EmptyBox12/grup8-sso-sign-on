@@ -1,6 +1,9 @@
 const db = require("../database/db");
+const { v4: uuidv4 } = require("uuid");
 
 exports.isAuthorized = (req, res) => {
+  let query = req.query.redirectURL;
+  let stringUrl = query.split("http://")[1];
   //must check if admin
   const { username, password } = req.body;
   db.query(
@@ -12,7 +15,14 @@ exports.isAuthorized = (req, res) => {
           .status(400)
           .json({ status: "fail", msg: "username not found" });
       }
-
+      let userTypeData = Object.values(results[0])
+      let userType = userTypeData[2];
+      console.log(stringUrl == "localhost:3020 ")
+      if(stringUrl === "localhost:3020 "){
+        if(userType == "user"){
+          return res.status(400).json({status:"fail", msg:"not admin"});
+        }
+      }
       let passwordData = Object.values(results[0]);
       let databasePassword = passwordData[0];
 
