@@ -11,10 +11,10 @@ function model(sequelize) {
     user_email: { type: DataTypes.STRING, allowNull: false },
     user_type: { type: DataTypes.STRING, allowNull: false },
   };
-
+  //password bilgi olarak dönmesini istemediğim için devre dışı bıraktım.(postmandede gözükmüyor)
   const options = {
     defaultScope: {
-      // exclude password hash by default
+      // exclude password hash by default.
       attributes: { exclude: ["user_password"] },
     },
     scopes: {
@@ -22,6 +22,6 @@ function model(sequelize) {
       withHash: { attributes: {} },
     },
   };
-
+  //sequlazi define ederek tablo oluşturdum.
   return sequelize.define("User", attributes, options);
 }

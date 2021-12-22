@@ -2,8 +2,8 @@
   "database": {
     "host": "localhost",
     "port": 3306,
-    "user": "",
-    "password": "",
-    "database": ""
+    "user": "ayca3",
+    "password": "Ayca1234!!",
+    "database": "test4"
   }
 }

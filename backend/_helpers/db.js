@@ -1,3 +1,6 @@
+//database connection için mysql2 ve sequalize kullanıldı.
+//sequalize=migrate işlemlerine yardımcı olur.biz bir model yaptık sequalize database e anlatır.
+//genel olarak burası connection işlemi +migrate işlemi
 const config = require("../config.json");
 const mysql = require("mysql2/promise");
 const { Sequelize } = require("sequelize");
@@ -24,8 +27,6 @@ async function initialize() {
 
   // init models and add them to the exported db object
   db.User = require("../users/user.model")(sequelize);
-  db.Token = require("../tokens/token.model")(sequelize);
-
-  // sync all models with database
+  // sync all models with database.User database tablosuna senkron ediyor.
   await sequelize.sync({ alter: true });
 }

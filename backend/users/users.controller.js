@@ -1,15 +1,17 @@
 const express = require("express");
 const router = express.Router();
+//joi:istekleklerdeki gerekliliklerde yardımcı olur.mesela username alanı eksikse post istediği yapt
+//yaparsak mesaj olarak döner.
+
 const Joi = require("joi");
 const validateRequest = require("../_middleware/validate-request");
 const Role = require("../_helpers/role");
 const userService = require("./user.service");
-
 // routes
 
 router.get("/", getAll);
 router.get("/:id", getById);
-router.post("/", createSchema, create);
+router.post("/", createSchema, create); //schema fonksiyonunu cagırarak gelen datanın uygun olup olmadıgına bakıyorum
 router.put("/:id", updateSchema, update);
 router.delete("/:id", _delete);
 
@@ -19,14 +21,14 @@ module.exports = router;
 
 function getAll(req, res, next) {
   userService
-    .getAll(req.params.token)
+    .getAll()
     .then((users) => res.json(users))
     .catch(next);
 }
 
 function getById(req, res, next) {
   userService
-    .getById(req.params.token, req.params.id)
+    .getById(req.params.id)
     .then((user) => res.json(user))
     .catch(next);
 }
@@ -40,14 +42,14 @@ function create(req, res, next) {
 
 function update(req, res, next) {
   userService
-    .update(req.params.token, req.params.id, req.body)
+    .update(req.params.id, req.body)
     .then(() => res.json({ message: "User updated" }))
     .catch(next);
 }
 
 function _delete(req, res, next) {
   userService
-    .delete(req.params.token, req.params.id)
+    .delete(req.params.id)
     .then(() => res.json({ message: "User deleted" }))
     .catch(next);
 }
@@ -56,7 +58,6 @@ function _delete(req, res, next) {
 
 function createSchema(req, res, next) {
   const schema = Joi.object({
-    token: Joi.string().required(),
     username: Joi.string().required(),
     user_name: Joi.string().required(),
     user_surname: Joi.string().required(),
@@ -70,7 +71,6 @@ function createSchema(req, res, next) {
 
 function updateSchema(req, res, next) {
   const schema = Joi.object({
-    token: Joi.string().empty(""),
     username: Joi.string().empty(""),
     user_name: Joi.string().empty(""),
     user_surname: Joi.string().empty(""),
