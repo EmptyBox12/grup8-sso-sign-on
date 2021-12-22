@@ -15,11 +15,15 @@ exports.isAuthorized = (req, res) => {
           .status(400)
           .json({ status: "fail", msg: "username not found" });
       }
-      let userTypeData = Object.values(results[0])
+      let userTypeData = Object.values(results[0]);
       let userType = userTypeData[2];
-      if(stringUrl === "localhost:3020" || stringUrl === "localhost:3020/" || stringUrl === "localhost:3020 " ){
-        if(userType == "user"){
-          return res.status(400).json({status:"fail", msg:"not admin"});
+      if (
+        stringUrl === "localhost:3020" ||
+        stringUrl === "localhost:3020/" ||
+        stringUrl === "localhost:3020 "
+      ) {
+        if (userType == "user") {
+          return res.status(400).json({ status: "fail", msg: "not admin" });
         }
       }
       let passwordData = Object.values(results[0]);
@@ -34,8 +38,14 @@ exports.isAuthorized = (req, res) => {
         if (expireDate.getHours() + 7)
           expireDate.setHours(expireDate.getHours() + 6);
         let dataDate = expireDate.toISOString().slice(0, 19).replace("T", " ");
+        let urlList ="";
+        if(userType == "user"){
+          urlList = "localhost:3010";
+        } else if(userType =="admin"){
+          urlList = "localhost:3010, localhost:3040";
+        }
         db.query(
-          `INSERT INTO token (user_id, token, expire_date) VALUES ('${userId}', '${accessToken}','${dataDate}')`,
+          `INSERT INTO token (user_id, token, expire_date, url) VALUES ('${userId}', '${accessToken}','${dataDate}', '${urlList}')`,
           (err, results, fields) => {
             if (err) throw err;
             console.log("added to database");
@@ -58,12 +68,13 @@ exports.isAuthorized = (req, res) => {
 };
 
 exports.isTokenValid = (req, res) => {
+  //check request url. when login add urls to token
   if (req.body.token == null) {
     return res.status(400).json({ status: "fail", msg: "token not found" });
   } else {
     try {
       db.query(
-        `SELECT expire_date, user_id FROM token WHERE token='${req.body.token}'`,
+        `SELECT expire_date, user_id, url FROM token WHERE token='${req.body.token}'`,
         (err, results, fields) => {
           if (err) {
             return res
@@ -75,10 +86,20 @@ exports.isTokenValid = (req, res) => {
               .status(400)
               .json({ status: "fail", msg: "token not found" });
           }
+          let token = req.body.token;
 
-          let tokenData = Object.keys(results[0]);
-          let token = tokenData[0].split("=")[1];
+          let query = req.query.url;
+          let stringUrl = query.split("http://")[1];
 
+          let urlData = Object.values(results[0]);
+          let url = urlData[2];
+          let urlArray = url.split(", ");
+          let newString = stringUrl.replace(/\s+/g, '');
+          let cleanUrl = newString.replace(/\//g, '');
+          if(!urlArray.includes(cleanUrl)){
+            return res.status(400).json({status:"fail", msg:"you don't have permission"})
+          }
+          
           let expireData = Object.values(results[0]);
           let expire = expireData[0];
 
