@@ -57,7 +57,6 @@ exports.isTokenValid = (req, res) => {
         `SELECT expire_date, user_id FROM token WHERE token='${req.body.token}'`,
         (err, results, fields) => {
           if (err) {
-            console.log(results);
             return res
               .status(400)
               .json({ status: "fail", msg: "token not found" });
@@ -72,14 +71,13 @@ exports.isTokenValid = (req, res) => {
           let token = tokenData[0].split("=")[1];
 
           let expireData = Object.values(results[0]);
-          let expire = expireData[1];
+          let expire = expireData[0];
 
           let userIdData = Object.values(results[0]);
-          let userId = userIdData[2];
+          let userId = userIdData[1];
 
           let expireDate = new Date(expire);
           let now = Date.now();
-
           if (now > expireDate) {
             res.status(400).json({ status: "fail", msg: "Token expired" });
           } else {
