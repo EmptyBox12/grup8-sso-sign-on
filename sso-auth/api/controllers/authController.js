@@ -17,8 +17,7 @@ exports.isAuthorized = (req, res) => {
       }
       let userTypeData = Object.values(results[0])
       let userType = userTypeData[2];
-      console.log(stringUrl == "localhost:3020 ")
-      if(stringUrl === "localhost:3020 "){
+      if(stringUrl === "localhost:3020" || stringUrl === "localhost:3020/" || stringUrl === "localhost:3020 " ){
         if(userType == "user"){
           return res.status(400).json({status:"fail", msg:"not admin"});
         }
