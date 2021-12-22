@@ -90,7 +90,6 @@ exports.isTokenValid = (req, res) => {
 
           let query = req.query.url;
           let stringUrl = query.split("http://")[1];
-
           let urlData = Object.values(results[0]);
           let url = urlData[2];
           let urlArray = url.split(", ");

@@ -10,6 +10,12 @@ function App() {
   const [password, setPassword] = useState("");
   const [checkQuery, setCheckQuery] = useState(false);
   const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
+
+  function cleanUrl() {
+    let url = window.location.search;
+    let cleanUrl = url.split("=")[1];
+    return cleanUrl;
+  }
   //check query
   useEffect(() => {
     if (window.location.search) {
@@ -21,9 +27,10 @@ function App() {
     if (checkQuery) {
       (async function checkCookie() {
         if (cookies.accessToken) {
+          console.log(cleanUrl());
           try {
             let response = await axios.post(
-              "http://localhost:3001/verifyToken/",
+              `http://localhost:3001/verifyToken/?url=${cleanUrl()}`,
               {
                 token: cookies.accessToken,
               }
