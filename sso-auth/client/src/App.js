@@ -71,8 +71,12 @@ function App() {
   return (
     <div className="App">
       {checkQuery && (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="form">
+          <div className="nameContainer">
+          <span className="login">Login</span>
+           Enter your username:
           <input
+          className="input"
             type="text"
             placeholder="username"
             required
@@ -81,7 +85,11 @@ function App() {
               setUsername(e.target.value);
             }}
           />
+          </div>
+          <div className="passwordContainer">
+          Enter your password:
           <input
+          className="input"
             type="password"
             placeholder="password"
             required
@@ -90,7 +98,8 @@ function App() {
               setPassword(e.target.value);
             }}
           />
-          <button type="submit">Login</button>
+          </div>
+          <button className="submitButton" type="submit">Login</button>
         </form>
       )}
     </div>
