@@ -38,8 +38,8 @@ exports.isAuthorized = (req, res) => {
         if (expireDate.getHours() + 7)
           expireDate.setHours(expireDate.getHours() + 6);
         let dataDate = expireDate.toISOString().slice(0, 19).replace("T", " ");
-        let urlList ="";
-        if(userType == "user"){
+        let urlList = "";
+        if (userType == "user") {
           urlList = "localhost:3010";
         } else if(userType =="admin"){
           urlList = "localhost:3010, localhost:3020";
@@ -93,12 +93,14 @@ exports.isTokenValid = (req, res) => {
           let urlData = Object.values(results[0]);
           let url = urlData[2];
           let urlArray = url.split(", ");
-          let newString = stringUrl.replace(/\s+/g, '');
-          let cleanUrl = newString.replace(/\//g, '');
-          if(!urlArray.includes(cleanUrl)){
-            return res.status(400).json({status:"fail", msg:"you don't have permission"})
+          let newString = stringUrl.replace(/\s+/g, "");
+          let cleanUrl = newString.replace(/\//g, "");
+          if (!urlArray.includes(cleanUrl)) {
+            return res
+              .status(400)
+              .json({ status: "fail", msg: "you don't have permission" });
           }
-          
+
           let expireData = Object.values(results[0]);
           let expire = expireData[0];
 
