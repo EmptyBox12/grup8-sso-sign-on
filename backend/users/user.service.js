@@ -9,50 +9,112 @@ module.exports = {
 };
 //databaseden tüm kayıtları listele
 async function getAll() {
-  return await db.User.findAll();
+  return await db.sequelize.query("call getAll()", function (err, result) {
+    if (err) {
+      console.log("err:", err);
+    } else {
+      console.log("results:", result);
+    }
+  });
 }
 //id e göre
 async function getById(id) {
-  return await getUser(id);
+  return await db.sequelize.query(
+    "call getById(?)",
+    { replacements: [id], type: db.sequelize.QueryTypes.RAW },
+    function (err, result) {
+      if (err) {
+        console.log("err:", err);
+      } else {
+        console.log("results:", result);
+      }
+    }
+  );
 }
 
 async function create(params) {
-  // validate(mail daha önce kullanılmışmı kullanılmamışmı ona bakılıyor)
-  if (await db.User.findOne({ where: { user_email: params.user_email } })) {
-    throw 'Email "' + params.user_email + '" is already registered';
-  }
-  const user = new db.User(params);
-
-  // save user
-  await user.save();
+  const users = await db.sequelize.query("call getAll()");
+  users.forEach((user) => {
+    if (
+      params.username === user.username ||
+      params.user_email === user.user_email
+    ) {
+      throw "User info is already taken";
+    }
+  });
+  let date_ob = new Date();
+  return await db.sequelize.query(
+    "call create_user(?,?,?,?,?,?,?,?)",
+    {
+      replacements: [
+        params.username,
+        params.user_name,
+        params.user_surname,
+        params.user_password,
+        params.user_email,
+        params.user_type,
+        date_ob,
+        date_ob,
+      ],
+      type: db.sequelize.QueryTypes.RAW,
+    },
+    function (err, result) {
+      if (err) {
+        console.log("err:", err);
+      } else {
+        console.log("results:", result);
+      }
+    }
+  );
 }
 
 async function update(id, params) {
-  const user = await getUser(id);
-
-  // validate(username daha önce kullanılmısmı kullanılmamısmı ona bakılıyor)
-  const usernameChanged = params.username && user.username !== params.username;
-  if (
-    usernameChanged &&
-    (await db.User.findOne({ where: { username: params.username } }))
-  ) {
-    throw 'Username "' + params.username + '" is already taken';
-  }
-
-  // copy params to user and save
-  Object.assign(user, params);
-  await user.save();
+  const users = await db.sequelize.query("call getAll()");
+  users.forEach((user) => {
+    if (user.id != id)
+      if (
+        params.username === user.username ||
+        params.user_email === user.user_email
+      ) {
+        throw "User info is already taken";
+      }
+  });
+  let date_ob = new Date();
+  return await db.sequelize.query(
+    "call update_user(?,?,?,?,?,?,?,?)",
+    {
+      replacements: [
+        params.username,
+        params.user_name,
+        params.user_surname,
+        params.user_password,
+        params.user_email,
+        params.user_type,
+        id,
+        date_ob,
+      ],
+      type: db.sequelize.QueryTypes.RAW,
+    },
+    function (err, result) {
+      if (err) {
+        console.log("err:", err);
+      } else {
+        console.log("results:", result);
+      }
+    }
+  );
 }
 //silme işlemi
 async function _delete(id) {
-  const user = await getUser(id);
-  await user.destroy();
-}
-
-// helper functions
-//pk ye göre varsa bul yoksa user not found döndür
-async function getUser(id) {
-  const user = await db.User.findByPk(id);
-  if (!user) throw "User not found";
-  return user;
+  return await db.sequelize.query(
+    "call delete_user(?)",
+    { replacements: [id], type: db.sequelize.QueryTypes.RAW },
+    function (err, result) {
+      if (err) {
+        console.log("err:", err);
+      } else {
+        console.log("results:", result);
+      }
+    }
+  );
 }

@@ -64,7 +64,6 @@ function createSchema(req, res, next) {
     user_type: Joi.string().valid(Role.Admin, Role.User).required(),
     user_email: Joi.string().email().required(),
     user_password: Joi.string().min(6).required(),
-    confirmPassword: Joi.string().valid(Joi.ref("user_password")).required(),
   });
   validateRequest(req, next, schema);
 }
@@ -77,7 +76,6 @@ function updateSchema(req, res, next) {
     user_type: Joi.string().valid(Role.Admin, Role.User).empty(""),
     user_email: Joi.string().email().empty(""),
     user_password: Joi.string().min(6).empty(""),
-    confirmPassword: Joi.string().valid(Joi.ref("user_password")).empty(""),
-  }).with("user_password", "confirmPassword");
+  });
   validateRequest(req, next, schema);
 }
