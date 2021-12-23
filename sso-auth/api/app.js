@@ -13,8 +13,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-app.use("/", authRoute);
-
 // access writer
 class AccessStream extends Writable {
   write(line) {
@@ -43,7 +41,6 @@ class ErrorStream extends Writable {
   }
 }
 let errorWriter = new ErrorStream();
-
 const skipSuccess = (req, res) => res.statusCode < 400;
 const skipError = (req, res) => res.statusCode >= 400;
 
@@ -62,6 +59,8 @@ app.use(
     stream: successWriter,
   })
 );
+
+app.use("/", authRoute);
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
