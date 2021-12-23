@@ -42,7 +42,7 @@ exports.isAuthorized = (req, res) => {
         if(userType == "user"){
           urlList = "localhost:3010";
         } else if(userType =="admin"){
-          urlList = "localhost:3010, localhost:3040";
+          urlList = "localhost:3010, localhost:3020";
         }
         db.query(
           `INSERT INTO token (user_id, token, expire_date, url) VALUES ('${userId}', '${accessToken}','${dataDate}', '${urlList}')`,
@@ -57,6 +57,7 @@ exports.isAuthorized = (req, res) => {
           authorization: true,
           user_id: userId,
           accessToken: accessToken,
+          expireDate: dataDate,
         });
       } else {
         return res
@@ -68,7 +69,6 @@ exports.isAuthorized = (req, res) => {
 };
 
 exports.isTokenValid = (req, res) => {
-  //check request url. when login add urls to token
   if (req.body.token == null) {
     return res.status(400).json({ status: "fail", msg: "token not found" });
   } else {
