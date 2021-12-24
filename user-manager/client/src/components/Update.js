@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
 export default function Update({ setUsers, updateMode, users, setUpdateMode }) {
+  const [cookies] = useCookies(["accessToken"]);
   let id = updateMode.id;
+  let index = users.findIndex(item => item.id === id);
+
   //after update, get users again and show them from the database
   async function handleUpdate(id, object) {
     // try {
-    //   const data = await axios.put(`url/${id}`, {object}, {headers:{"authorization": cookies.accessToken}});
+    //   const data = await axios.put(`url/${id}/?url=window.location.href`, {object}, {headers:{"authorization": `Bearer ${cookies.accessToken}` }});
     //   let newUsers = [...users];
     //   let index = newUsers.indexOf(item => item.id == id);
     //   newUsers[index] = object;
@@ -20,18 +24,18 @@ export default function Update({ setUsers, updateMode, users, setUpdateMode }) {
     // }
     let newUsers = [...users];
     object.id = id;
-    newUsers[id-1] = object;
+    newUsers[index] = object;
     setUsers(newUsers);
     setUpdateMode({ show: false, id: 0 });
   }
   const formik = useFormik({
     initialValues: {
-      username: users[id-1].username,
-      name: users[id-1].name,
+      username: users[index].username,
+      name: users[index].name,
       userSurname: "",
       userPassword: "",
       userType: "user",
-      email: users[id-1].email,
+      email: users[index].email,
     },
     onSubmit: (values) => {
       handleUpdate(id, values);
@@ -40,7 +44,7 @@ export default function Update({ setUsers, updateMode, users, setUpdateMode }) {
 
   return (
     <>
-      <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit} className="updateForm">
         <label htmlFor="username">Username</label>
         <input
           type="text"

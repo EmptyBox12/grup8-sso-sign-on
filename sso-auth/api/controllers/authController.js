@@ -1,5 +1,6 @@
 const db = require("../database/db");
 const { v4: uuidv4 } = require("uuid");
+const bcrypt = require("bcrypt");
 
 exports.isAuthorized = (req, res) => {
   let query = req.query.redirectURL;
@@ -31,38 +32,42 @@ exports.isAuthorized = (req, res) => {
 
       let userIdData = Object.values(results[0]);
       let userId = userIdData[1];
-
-      if (password === databasePassword) {
-        let accessToken = uuidv4();
-        let expireDate = new Date(Date.now());
-        expireDate.setHours(expireDate.getHours() + 6);
-        let dataDate = expireDate.toISOString().slice(0, 19).replace("T", " ");
-        let urlList = "";
-        if (userType == "user") {
-          urlList = "localhost:3010";
-        } else if (userType == "admin") {
-          urlList = "localhost:3010, localhost:3020";
-        }
-        db.query(
-          `INSERT INTO token (user_id, token, expire_date, url) VALUES ('${userId}', '${accessToken}','${dataDate}', '${urlList}')`,
-          (err, results, fields) => {
-            if (err) throw err;
-            console.log("added to database");
+      bcrypt.compare(password, databasePassword, function (err, result) {
+        if (result) {
+          let accessToken = uuidv4();
+          let expireDate = new Date(Date.now());
+          expireDate.setHours(expireDate.getHours() + 6);
+          let dataDate = expireDate
+            .toISOString()
+            .slice(0, 19)
+            .replace("T", " ");
+          let urlList = "";
+          if (userType == "user") {
+            urlList = "localhost:3010";
+          } else if (userType == "admin") {
+            urlList = "localhost:3010, localhost:3020";
           }
-        );
-        res.status(200).json({
-          status: "success",
-          msg: "logged in",
-          authorization: true,
-          user_id: userId,
-          accessToken: accessToken,
-          expireDate: dataDate,
-        });
-      } else {
-        return res
-          .status(400)
-          .json({ status: "fail", msg: "password doesn't match" });
-      }
+          db.query(
+            `INSERT INTO token (user_id, token, expire_date, url) VALUES ('${userId}', '${accessToken}','${dataDate}', '${urlList}')`,
+            (err, results, fields) => {
+              if (err) throw err;
+              console.log("added to database");
+            }
+          );
+          res.status(200).json({
+            status: "success",
+            msg: "logged in",
+            authorization: true,
+            user_id: userId,
+            accessToken: accessToken,
+            expireDate: dataDate,
+          });
+        } else {
+          return res
+            .status(400)
+            .json({ status: "fail", msg: "password doesn't match" });
+        }
+      });
     }
   );
 };

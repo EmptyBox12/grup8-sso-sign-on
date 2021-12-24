@@ -12,11 +12,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size:40px;
+  font-size: 40px;
   font-weight: 700;
 }
 .title{
   margin-left: 40px;
+  cursor: pointer;
+}
+.title:hover{
+  filter: brightness(0.9);
+}
+.title:active{
+  filter: brightness(0.8);
 }
 .createUser{
   margin-right: 40px;
@@ -37,7 +44,7 @@
   align-items: center;
   gap: 20px;
   padding: 10px;
-  width: 100%;
+  width: 97%;
 }
 .userContainer{
   height: 100px;
@@ -80,5 +87,40 @@
   filter: brightness(0.9);
 }
 .rightSide button:active{
+  filter: brightness(0.8);
+}
+.updateContainer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  height:80vh;
+  margin-top: 20px;
+  border-radius: 20px;
+  background-color: #eee;
+}
+.updateForm{
+  display: flex;
+  flex-direction: column;
+  font-size: 25px;
+  gap: 10px;
+}
+.updateForm input{
+  height: 25px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+.updateForm button{
+  width: 70px;
+  height: 30px;
+  background-color: skyblue;
+  border-radius: 7px;
+  font-weight: 600;
+  align-self: flex-end;
+}
+.updateForm button:hover{
+  filter: brightness(0.9);
+}
+.updateForm button:active{
   filter: brightness(0.8);
 }

@@ -5,6 +5,7 @@ import axios from "axios";
 import Navbar from "./components/Navbar";
 import Usercard from "./components/Usercard";
 import Update from "./components/Update";
+import Create from "./components/Create";
 import "./App.css";
 
 function App() {
@@ -63,16 +64,16 @@ function App() {
 
   async function handleDelete(id) {
     // try {
-    //   const data = await axios.delete(`url/${id}`, {
-    //     headers: { "authorization": cookies.accessToken },
+    //   const data = await axios.delete(`url/${id}/?url=window.location.href`, {
+    //     headers: { "authorization": Bearer cookies.accessToken },
     //   });
-    //   let newUsers = users.filter((user) => user.id != id);
-    //   setUsers(newUsers);
     // } catch (err) {
     //   if (err.response.data.status === "token fail") {
     //     window.location.href = `http://localhost:3000/?redirect=${window.location.href}`;
     //   }
     // }
+    let newUsers = users.filter((user) => user.id != id);
+    setUsers(newUsers);
     console.log(id);
   }
 
@@ -82,14 +83,18 @@ function App() {
 
   return (
     <div className="App">
-      <Navbar setCreateMode={setCreateMode}/>
-      <div className="userCardContainer">
+      <Navbar setCreateMode={setCreateMode} setUpdateMode={setUpdateMode} />
+      
         {users && !updateMode.show && !createMode &&
-          users.map((user) => {
-            return <Usercard user={user} handleDelete={handleDelete} setUpdateMode= {setUpdateMode}/>;
+        <div className="userCardContainer">
+         { users.map((user) => {
+            return <Usercard user={user} handleDelete={handleDelete} setUpdateMode= {setUpdateMode} key={user.id}/>;
           })}
+          </div>
+          }
+          
         {updateMode.show && 
-          <div>
+          <div className="updateContainer">
             <Update setUsers = {setUsers}  updateMode={updateMode} users={users} setUpdateMode= {setUpdateMode}/>
           </div>
         }
@@ -98,7 +103,7 @@ function App() {
             Create Mode
           </div>
         }
-      </div>
+      
     </div>
   );
 }
