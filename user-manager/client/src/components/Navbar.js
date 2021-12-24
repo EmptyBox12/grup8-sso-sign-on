@@ -1,10 +1,10 @@
 import React from 'react'
 
-export default function navBar() {
+export default function navBar({setCreateMode}) {
   return (
     <div className='header'>
        <span className='title'>User Manager</span>
-      <button className='createUser'>Create User</button>
+      <button onClick={()=> {setCreateMode(true)}} className='createUser'>Create User</button>
     </div>
   )
 }
