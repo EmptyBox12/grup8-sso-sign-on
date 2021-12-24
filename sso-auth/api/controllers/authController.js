@@ -35,13 +35,12 @@ exports.isAuthorized = (req, res) => {
       if (password === databasePassword) {
         let accessToken = uuidv4();
         let expireDate = new Date(Date.now());
-        if (expireDate.getHours() + 7)
-          expireDate.setHours(expireDate.getHours() + 6);
+        expireDate.setHours(expireDate.getHours() + 6);
         let dataDate = expireDate.toISOString().slice(0, 19).replace("T", " ");
         let urlList = "";
         if (userType == "user") {
           urlList = "localhost:3010";
-        } else if(userType =="admin"){
+        } else if (userType == "admin") {
           urlList = "localhost:3010, localhost:3020";
         }
         db.query(
@@ -112,12 +111,28 @@ exports.isTokenValid = (req, res) => {
           if (now > expireDate) {
             res.status(400).json({ status: "fail", msg: "Token expired" });
           } else {
-            res.status(200).json({
-              status: "success",
-              msg: "token is valid",
-              token,
-              userId,
-            });
+            //update token expire time
+            let expireDate = new Date(Date.now());
+            expireDate.setHours(expireDate.getHours() + 6);
+            let dataDate = expireDate
+              .toISOString()
+              .slice(0, 19)
+              .replace("T", " ");
+            db.query(
+              `UPDATE token SET expire_date = '${dataDate}' WHERE token = '${token}'`,
+              (err, results, fields) => {
+                if (err) {
+                  console.log(err);
+                } else if (results) {
+                  res.status(200).json({
+                    status: "success",
+                    msg: "token is valid",
+                    token,
+                    userId,
+                  });
+                }
+              }
+            );
           }
         }
       );
