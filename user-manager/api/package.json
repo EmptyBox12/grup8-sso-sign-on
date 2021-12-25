@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "start": "node ./server.js",
-    "start:dev": "nodemon ./server.js"
+    "dev": "nodemon ./server.js"
   },
   "author": "ayca",
   "license": "ISC",
@@ -20,6 +20,6 @@
     "sequelize": "^6.3.4"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.15"
   }
 }

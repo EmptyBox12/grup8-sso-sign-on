@@ -40,7 +40,7 @@ function App() {
   }, []);
   async function getUsers() {
     try {
-      let usersData = await axios.get("https://jsonplaceholder.typicode.com/users");
+      let usersData = await axios.get("http://localhost:4000/users");
       console.log(usersData.data);
       if(JSON.stringify(usersData.data)!= JSON.stringify(users)){
         setUsers(usersData.data);
@@ -63,22 +63,19 @@ function App() {
   }, [loggedIn, users]);
 
   async function handleDelete(id) {
-    // try {
-    //   const data = await axios.delete(`url/${id}/?url=window.location.href`, {
-    //     headers: { "authorization": Bearer cookies.accessToken },
-    //   });
-    // } catch (err) {
-    //   if (err.response.data.status === "token fail") {
-    //     window.location.href = `http://localhost:3000/?redirect=${window.location.href}`;
-    //   }
-    // }
-    let newUsers = users.filter((user) => user.id != id);
-    setUsers(newUsers);
-    console.log(id);
-  }
-
-  async function createUser() {
-    
+    try {
+      const data = await axios.delete(`http://localhost:4000/users/${id}/?url=${window.location.href}`, {
+        headers: { "authorization": `Bearer ${cookies.accessToken}` },
+      });
+      let newUsers = users.filter((user) => user.id != id);
+      setUsers(newUsers);
+    } catch (err) {
+      if (err.response.data.status === "token fail") {
+        window.location.href = `http://localhost:3000/?redirect=${window.location.href}`;
+      } else {
+        console.log(err.response);
+      }
+    }
   }
 
   return (
@@ -99,7 +96,7 @@ function App() {
           </div>
         }
         {createMode &&
-          <div>
+          <div className="updateContainer">
             <Create setUsers= {setUsers} createMode = {setCreateMode} users = {users} />
           </div>
         }

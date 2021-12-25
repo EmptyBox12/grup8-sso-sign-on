@@ -8,7 +8,7 @@ exports.isAuthorized = (req, res) => {
   //must check if admin
   const { username, password } = req.body;
   db.query(
-    `SELECT user_password, id, user_type FROM user WHERE username='${username}'`,
+    `SELECT user_password, id, user_type FROM users WHERE username='${username}'`,
     (err, results, fields) => {
       if (err) throw err;
       if (!results || results.length == 0) {

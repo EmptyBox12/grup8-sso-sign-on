@@ -41,6 +41,7 @@ function create(req, res, next) {
 }
 
 function update(req, res, next) {
+  console.log(req.body);
   userService
     .update(req.params.id, req.body)
     .then(() => res.json({ message: "User updated" }))
