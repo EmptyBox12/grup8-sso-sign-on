@@ -10,13 +10,18 @@ module.exports = {
 };
 //databaseden tüm kayıtları listele
 async function getAll() {
-  return await db.sequelize.query("call getAll()", function (err, result) {
-    if (err) {
-      throw new Error("err:", err);
-    } else {
-      console.log("results:", result);
+  const users = await db.sequelize.query(
+    "call getAll()",
+    function (err, result) {
+      if (err) {
+        throw new Error("err:", err);
+      } else {
+        console.log("results:", result);
+      }
     }
-  });
+  );
+  users.forEach((user) => delete user.user_password);
+  return users;
 }
 //id e göre
 async function getById(id) {
@@ -31,9 +36,11 @@ async function getById(id) {
       }
     }
   );
+  console.log;
   if (!user[0]) {
     throw new Error("User not found.");
   } else {
+    delete user[0].user_password;
     return user;
   }
 }
@@ -87,6 +94,7 @@ async function update(id, params) {
       }
   });
   let date_ob = new Date();
+  const password = await bcrypt.hash(params.user_password, 10);
   return await db.sequelize.query(
     "call update_user(?,?,?,?,?,?,?,?)",
     {
@@ -94,7 +102,7 @@ async function update(id, params) {
         params.username,
         params.user_name,
         params.user_surname,
-        params.user_password,
+        password,
         params.user_email,
         params.user_type,
         id,
