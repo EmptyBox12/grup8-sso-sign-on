@@ -32,7 +32,7 @@ function App() {
           }
         } catch (err) {
           if (err.response.data.status === "fail") {
-            window.location.href = `http://localhost:3000/?redirect=${window.location.href}`;
+            window.location.href = `http://localhost:3000/?redirectURL=${window.location.href}`;
           }
         }
       }

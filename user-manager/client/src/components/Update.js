@@ -36,7 +36,7 @@ export default function Update({ setUsers, updateMode, users, setUpdateMode }) {
     } catch (err) {
       values.user_password ="";
       if (err.response.data.status === "token fail") {
-        window.location.href = `http://localhost:3000/?redirect=${window.location.href}`;
+        window.location.href = `http://localhost:3000/?redirectURL=${window.location.href}`;
       } else {
         alert(err.response.data.message);
       }

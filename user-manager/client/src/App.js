@@ -32,7 +32,7 @@ function App() {
         } catch (err) {
           console.log(err);
           if (err.response.data.status === "fail") {
-            window.location.href = `http://localhost:3000/?redirect=${window.location.href}`;
+            window.location.href = `http://localhost:3000/?redirectURL=${window.location.href}`;
           }
         }
       }
@@ -71,7 +71,7 @@ function App() {
       setUsers(newUsers);
     } catch (err) {
       if (err.response.data.status === "token fail") {
-        window.location.href = `http://localhost:3000/?redirect=${window.location.href}`;
+        window.location.href = `http://localhost:3000/?redirectURL=${window.location.href}`;
       } else {
         console.log(err.response);
       }
