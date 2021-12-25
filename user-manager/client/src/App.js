@@ -100,7 +100,7 @@ function App() {
         }
         {createMode &&
           <div>
-            Create Mode
+            <Create setUsers= {setUsers} createMode = {setCreateMode} users = {users} />
           </div>
         }
       

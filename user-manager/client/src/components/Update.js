@@ -10,7 +10,7 @@ export default function Update({ setUsers, updateMode, users, setUpdateMode }) {
   let index = users.findIndex(item => item.id === id);
 
   //after update, get users again and show them from the database
-  async function handleUpdate(id, object) {
+  async function handleUpdate(id, values) {
     // try {
     //   const data = await axios.put(`url/${id}/?url=window.location.href`, {object}, {headers:{"authorization": `Bearer ${cookies.accessToken}` }});
     //   let newUsers = [...users];
@@ -23,8 +23,8 @@ export default function Update({ setUsers, updateMode, users, setUpdateMode }) {
     //   }
     // }
     let newUsers = [...users];
-    object.id = id;
-    newUsers[index] = object;
+    values.id = id;
+    newUsers[index] = values;
     setUsers(newUsers);
     setUpdateMode({ show: false, id: 0 });
   }
@@ -37,8 +37,8 @@ export default function Update({ setUsers, updateMode, users, setUpdateMode }) {
       userType: "user",
       email: users[index].email,
     },
-    onSubmit: (values) => {
-      handleUpdate(id, values);
+    onSubmit: async (values) => {
+      await handleUpdate(id, values);
     },
   });
 
