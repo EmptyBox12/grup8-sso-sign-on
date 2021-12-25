@@ -5,7 +5,16 @@ import "./App.css";
 
 function App() {
   const [cookies] = useCookies(["accessToken"]);
-  const [userInfo, setUserInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState("");
+
+  async function getUser(id) {
+    try {
+      let usersData = await axios.get(`http://localhost:4000/users/${id}`);
+      return usersData.data
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   useEffect(() => {
     (async function checkCookie() {
@@ -18,14 +27,8 @@ function App() {
             }
           );
           if (response.data.status === "success") {
-            setUserInfo({
-              user_id: "1",
-              username: "ataberktumay",
-              user_name: "Ataberk",
-              user_surname: "Tümay",
-              user_email: "fındık@gmail.com",
-              user_type: "admin",
-            });
+            let userInfo = await getUser(response.data.userId);
+            setUserInfo(userInfo);
           }
         } catch (err) {
           if (err.response.data.status === "fail") {
@@ -42,14 +45,14 @@ function App() {
         <div className="userInfoContainer">
           <div className="title">User Information</div>
           <div className="idInfo">
-            <span>ID: {userInfo.user_id}</span> <span>{userInfo.username}</span>
+            <span>ID: {userInfo[0].id}</span> <span>{userInfo[0].username}</span>
           </div>
           <div className="userPersonal">
-            <span>{userInfo.user_name}</span> <span>{userInfo.user_surname}</span>
+            <span>{userInfo[0].user_name}</span>{" "}
+            <span>{userInfo[0].user_surname}</span>
           </div>
           <div className="emailInfo">
-            <span>{userInfo.user_email}</span> <span>{userInfo.user_type}</span>
-             
+            <span>{userInfo[0].user_email}</span> <span>{userInfo[0].user_type}</span>
           </div>
         </div>
       )}

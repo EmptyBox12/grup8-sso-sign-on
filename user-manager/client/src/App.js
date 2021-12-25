@@ -97,7 +97,7 @@ function App() {
         }
         {createMode &&
           <div className="updateContainer">
-            <Create setUsers= {setUsers} createMode = {setCreateMode} users = {users} />
+            <Create setUsers= {setUsers} setCreateMode = {setCreateMode} users = {users} />
           </div>
         }
       

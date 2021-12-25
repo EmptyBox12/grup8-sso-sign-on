@@ -28,6 +28,7 @@ export default function Create({ setUsers, setCreateMode, users }) {
       setUsers(newUsers);
       setCreateMode(false);
     } catch (err) {
+      console.log(err);
       values.user_password ="";
       if (err.response.data.status === "token fail") {
         window.location.href = `http://localhost:3000/?redirect=${window.location.href}`;
