@@ -11,6 +11,12 @@ function App() {
   const [checkQuery, setCheckQuery] = useState(false);
   const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
 
+  async function getIP() {
+    let response = await axios.get("http://api.ipify.org/?format=json");
+    let userIP = response.data.ip;
+    return userIP;
+  }
+
   function cleanUrl() {
     let url = window.location.search;
     let cleanUrl = url.split("=")[1];
@@ -29,10 +35,16 @@ function App() {
         if (cookies.accessToken) {
           console.log(cleanUrl());
           try {
+            let userIP = await getIP();
             let response = await axios.post(
               `http://localhost:3001/verifyToken/?url=${cleanUrl()}`,
               {
                 token: cookies.accessToken,
+              },
+              {
+                headers: {
+                  ip: userIP,
+                },
               }
             );
             if (response.data.status === "success") {
@@ -53,10 +65,16 @@ function App() {
     let salt = "alotech";
     let hashedPass = sha256(password + salt);
     try {
+      let userIP = await getIP();
       let query = window.location.search.substring(1).split("=")[1];
       let loginData = await axios.post(
         `http://localhost:3001/isAuthorized/?redirectURL=${query}`,
-        { username: username, password: hashedPass }
+        { username: username, password: hashedPass },
+        {
+          headers: {
+            ip: userIP,
+          },
+        }
       );
       let loginInfo = loginData.data;
       if (loginInfo.status === "success") {
@@ -73,33 +91,35 @@ function App() {
       {checkQuery && (
         <form onSubmit={handleSubmit} className="form">
           <div className="nameContainer">
-          <span className="login">Login</span>
-           Enter your username:
-          <input
-          className="input"
-            type="text"
-            placeholder="username"
-            required
-            value={username}
-            onChange={(e) => {
-              setUsername(e.target.value);
-            }}
-          />
+            <span className="login">Login</span>
+            Enter your username:
+            <input
+              className="input"
+              type="text"
+              placeholder="username"
+              required
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value);
+              }}
+            />
           </div>
           <div className="passwordContainer">
-          Enter your password:
-          <input
-          className="input"
-            type="password"
-            placeholder="password"
-            required
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-          />
+            Enter your password:
+            <input
+              className="input"
+              type="password"
+              placeholder="password"
+              required
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+            />
           </div>
-          <button className="submitButton" type="submit">Login</button>
+          <button className="submitButton" type="submit">
+            Login
+          </button>
         </form>
       )}
     </div>

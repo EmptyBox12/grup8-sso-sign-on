@@ -47,8 +47,9 @@ exports.isAuthorized = (req, res) => {
           } else if (userType == "admin") {
             urlList = "localhost:3010, localhost:3020";
           }
+          let clientIP = req.headers["ip"];
           db.query(
-            `INSERT INTO token (user_id, token, expire_date, url) VALUES ('${userId}', '${accessToken}','${dataDate}', '${urlList}')`,
+            `INSERT INTO token (user_id, token, expire_date, url, ip) VALUES ('${userId}', '${accessToken}','${dataDate}', '${urlList}', '${clientIP}')`,
             (err, results, fields) => {
               if (err) throw err;
               console.log("added to database");
@@ -78,7 +79,7 @@ exports.isTokenValid = (req, res) => {
   } else {
     try {
       db.query(
-        `SELECT expire_date, user_id, url FROM token WHERE token='${req.body.token}'`,
+        `SELECT expire_date, user_id, url, ip FROM token WHERE token='${req.body.token}'`,
         (err, results, fields) => {
           if (err) {
             return res
@@ -90,8 +91,15 @@ exports.isTokenValid = (req, res) => {
               .status(400)
               .json({ status: "fail", msg: "token not found" });
           }
+          let clientIP = req.headers["ip"];
+          let databaseIP = Object.values(results[0])[3];
+          if(clientIP != databaseIP){
+            return res
+              .status(400)
+              .json({ status: "fail", msg: "you don't have permission" });
+          }
+          
           let token = req.body.token;
-
           let query = req.query.url;
           let stringUrl = query.split("http://")[1];
           let urlData = Object.values(results[0]);

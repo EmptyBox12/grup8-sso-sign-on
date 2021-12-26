@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useFormik } from "formik";
@@ -8,8 +8,20 @@ import * as Yup from "yup";
 export default function Create({ setUsers, setCreateMode, users }) {
   const [cookies] = useCookies(["accessToken"]);
 
+  async function getIP() {
+    try{
+      let response = await axios.get("http://api.ipify.org/?format=json");
+      let userIP = response.data.ip;
+      return userIP;
+    } catch(e){
+      console.log(e.response);
+    }
+   
+  }
+
   async function handleCreate(values) {
     try {
+      let userIP = await getIP();
       values.user_password = sha256(values.user_password + "alotech");
       const data = await axios.post(
         `http://localhost:4000/users/?url=${window.location.href}`,
@@ -21,7 +33,7 @@ export default function Create({ setUsers, setCreateMode, users }) {
           user_email: values.user_email,
           user_type: values.user_type,
         },
-        { headers: { authorization: `Bearer ${cookies.accessToken}` } }
+        { headers: { authorization: `Bearer ${cookies.accessToken}` , ip: userIP} }
       );
       let newUsers = [...users];
       newUsers.push(values);
@@ -134,7 +146,6 @@ export default function Create({ setUsers, setCreateMode, users }) {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value="user"
-            checked="true"
           />
           <label htmlFor="user_type">user</label>
         </div>

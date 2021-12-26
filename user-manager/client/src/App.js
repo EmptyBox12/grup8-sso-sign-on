@@ -12,21 +12,32 @@ function App() {
   const [cookies] = useCookies(["accessToken"]);
   const [users, setUsers] = useState([]);
   const [loggedIn, setLoggedIn] = useState(false);
-  const [updateMode, setUpdateMode] = useState({show:false, id:0});
+  const [updateMode, setUpdateMode] = useState({ show: false, id: 0 });
   const [createMode, setCreateMode] = useState(false);
 
+  async function getIP() {
+    let response = await axios.get("http://api.ipify.org/?format=json");
+    let userIP = response.data.ip;
+    return userIP;
+  }
 
   useEffect(() => {
     (async function checkCookie() {
-      if(!cookies.accessToken){
+      if (!cookies.accessToken) {
         window.location.href = `http://localhost:3000/?redirectURL=${window.location.href}`;
       }
       if (cookies.accessToken) {
         try {
+          let userIP = await getIP();
           let response = await axios.post(
             `http://localhost:3001/verifyToken/?url=${window.location.href}`,
             {
               token: cookies.accessToken,
+            },
+            {
+              headers: {
+                ip: userIP,
+              },
             }
           );
           if (response.data.status === "success") {
@@ -43,13 +54,21 @@ function App() {
   }, []);
   async function getUsers() {
     try {
-      let usersData = await axios.get(`http://localhost:4000/users/?url=${window.location.href}`, {headers: { "authorization": `Bearer ${cookies.accessToken}` }});
+      let userIP = await getIP();
+      let usersData = await axios.get(
+        `http://localhost:4000/users/?url=${window.location.href}`,
+        { headers: { authorization: `Bearer ${cookies.accessToken}`, ip: userIP } }
+      );
       console.log(usersData.data);
-      if(JSON.stringify(usersData.data)!= JSON.stringify(users)){
+      if (JSON.stringify(usersData.data) != JSON.stringify(users)) {
         setUsers(usersData.data);
       }
     } catch (err) {
-      console.log(err);
+      if (err.response.data.status === "token fail") {
+        window.location.href = `http://localhost:3000/?redirectURL=${window.location.href}`;
+      } else {
+        alert(err.response.data.message);
+      }
     }
   }
 
@@ -67,12 +86,17 @@ function App() {
 
   async function handleDelete(id) {
     try {
-      const data = await axios.delete(`http://localhost:4000/users/${id}/?url=${window.location.href}`, {
-        headers: { "authorization": `Bearer ${cookies.accessToken}` },
-      });
+      let userIP = await getIP();
+      const data = await axios.delete(
+        `http://localhost:4000/users/${id}/?url=${window.location.href}`,
+        {
+          headers: { authorization: `Bearer ${cookies.accessToken}` , ip: userIP},
+        }
+      );
       let newUsers = users.filter((user) => user.id != id);
       setUsers(newUsers);
     } catch (err) {
+      console.log(err.response);
       if (err.response.data.status === "token fail") {
         window.location.href = `http://localhost:3000/?redirectURL=${window.location.href}`;
       } else {
@@ -84,26 +108,41 @@ function App() {
   return (
     <div className="App">
       <Navbar setCreateMode={setCreateMode} setUpdateMode={setUpdateMode} />
-      
-        {users && !updateMode.show && !createMode &&
+
+      {users && !updateMode.show && !createMode && (
         <div className="userCardContainer">
-         { users.map((user, index) => {
-            return <Usercard user={user} handleDelete={handleDelete} setUpdateMode= {setUpdateMode} key={index}/>;
+          {users.map((user, index) => {
+            return (
+              <Usercard
+                user={user}
+                handleDelete={handleDelete}
+                setUpdateMode={setUpdateMode}
+                key={index}
+              />
+            );
           })}
-          </div>
-          }
-          
-        {updateMode.show && 
-          <div className="updateContainer">
-            <Update setUsers = {setUsers}  updateMode={updateMode} users={users} setUpdateMode= {setUpdateMode}/>
-          </div>
-        }
-        {createMode &&
-          <div className="updateContainer">
-            <Create setUsers= {setUsers} setCreateMode = {setCreateMode} users = {users} />
-          </div>
-        }
-      
+        </div>
+      )}
+
+      {updateMode.show && (
+        <div className="updateContainer">
+          <Update
+            setUsers={setUsers}
+            updateMode={updateMode}
+            users={users}
+            setUpdateMode={setUpdateMode}
+          />
+        </div>
+      )}
+      {createMode && (
+        <div className="updateContainer">
+          <Create
+            setUsers={setUsers}
+            setCreateMode={setCreateMode}
+            users={users}
+          />
+        </div>
+      )}
     </div>
   );
 }

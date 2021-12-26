@@ -11,9 +11,15 @@ export default function Update({ setUsers, updateMode, users, setUpdateMode }) {
   let id = updateMode.id;
   let index = users.findIndex((item) => item.id === id);
 
-  //after update, get users again and show them from the database
+  async function getIP() {
+    let response = await axios.get("http://api.ipify.org/?format=json");
+    let userIP = response.data.ip;
+    return userIP;
+  }
+
   async function handleUpdate(id, values) {
     try {
+      let userIP = await getIP();
       values.user_password = sha256(values.user_password + "alotech");
       const data = await axios.put(
         `http://localhost:4000/users/${id}/?url=${window.location.href}`,
@@ -25,7 +31,7 @@ export default function Update({ setUsers, updateMode, users, setUpdateMode }) {
           user_email: values.user_email,
           user_type: values.user_type,
         },
-        { headers: { authorization: `Bearer ${cookies.accessToken}` } }
+        { headers: { authorization: `Bearer ${cookies.accessToken}` , ip: userIP} }
       );
       let newUsers = [...users];
       values.id = id;
