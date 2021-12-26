@@ -43,7 +43,7 @@ function App() {
   }, []);
   async function getUsers() {
     try {
-      let usersData = await axios.get("http://localhost:4000/users");
+      let usersData = await axios.get(`http://localhost:4000/users/?url=${window.location.href}`, {headers: { "authorization": `Bearer ${cookies.accessToken}` }});
       console.log(usersData.data);
       if(JSON.stringify(usersData.data)!= JSON.stringify(users)){
         setUsers(usersData.data);
