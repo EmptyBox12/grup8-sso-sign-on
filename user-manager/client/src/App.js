@@ -18,6 +18,9 @@ function App() {
 
   useEffect(() => {
     (async function checkCookie() {
+      if(!cookies.accessToken){
+        window.location.href = `http://localhost:3000/?redirectURL=${window.location.href}`;
+      }
       if (cookies.accessToken) {
         try {
           let response = await axios.post(
@@ -84,8 +87,8 @@ function App() {
       
         {users && !updateMode.show && !createMode &&
         <div className="userCardContainer">
-         { users.map((user) => {
-            return <Usercard user={user} handleDelete={handleDelete} setUpdateMode= {setUpdateMode} key={user.id}/>;
+         { users.map((user, index) => {
+            return <Usercard user={user} handleDelete={handleDelete} setUpdateMode= {setUpdateMode} key={index}/>;
           })}
           </div>
           }

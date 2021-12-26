@@ -124,3 +124,17 @@
 .updateForm button:active{
   filter: brightness(0.8);
 }
+.radio{
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  gap: 5px;
+}
+.error{
+  font-size: 15px;
+  color: tomato;
+}
+.form-element{
+  display: flex;
+  flex-direction: column;
+}

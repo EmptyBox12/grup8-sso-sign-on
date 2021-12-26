@@ -18,6 +18,9 @@ function App() {
 
   useEffect(() => {
     (async function checkCookie() {
+      if(!cookies.accessToken){
+        window.location.href = `http://localhost:3000/?redirectURL=${window.location.href}`;
+      }
       if (cookies.accessToken) {
         try {
           let response = await axios.post(
