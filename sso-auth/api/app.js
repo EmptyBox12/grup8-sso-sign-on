@@ -1,9 +1,10 @@
 const express = require("express");
+require('dotenv').config()
 const authRoute = require("./routes/authRoute");
 const cors = require("cors");
 const app = express();
-const port = 3001;
 const db = require("./database/db");
+
 
 const logger = require("morgan");
 const Writable = require("stream").Writable;
@@ -62,6 +63,6 @@ app.use(
 
 app.use("/", authRoute);
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+app.listen(process.env.PORT, () => {
+  console.log(`Example app listening at http://localhost:${process.env.PORT}`);
 });
