@@ -5,7 +5,6 @@ const bcrypt = require("bcrypt");
 exports.isAuthorized = (req, res) => {
   let query = req.query.redirectURL;
   let stringUrl = query.split("http://")[1];
-  //must check if admin
   const { username, password } = req.body;
   db.query(
     `SELECT user_password, id, user_type FROM users WHERE username='${username}'`,
