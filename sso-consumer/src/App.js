@@ -15,13 +15,13 @@ function App() {
 
   async function getUser(id, userIP) {
     try {
-      let usersData = await axios.get(`http://localhost:4000/users/${id}/?url=${window.location.href}`, {
+      let usersData = await axios.get(`${process.env.REACT_APP_USER_API}/users/${id}/?url=${window.location.href}`, {
         headers: { authorization: `Bearer ${cookies.accessToken}`, ip: userIP },
       });
       return usersData.data;
     } catch (err) {
       if (err.response.data.status === "token fail") {
-        window.location.href = `http://localhost:3000/?redirectURL=${window.location.href}`;
+        window.location.href = `${process.env.REACT_APP_SSO_LOGIN}/?redirectURL=${window.location.href}`;
       } else {
         alert(err.response.data.message);
       }
@@ -31,13 +31,13 @@ function App() {
   useEffect(() => {
     (async function checkCookie() {
       if (!cookies.accessToken) {
-        window.location.href = `http://localhost:3000/?redirectURL=${window.location.href}`;
+        window.location.href = `${process.env.REACT_APP_SSO_LOGIN}/?redirectURL=${window.location.href}`;
       }
       if (cookies.accessToken) {
         try {
           let userIP = await getIP();
           let response = await axios.post(
-            `http://localhost:3001/verifyToken/?url=${window.location.href}`,
+            `${process.env.REACT_APP_SSO_API}/verifyToken/?url=${window.location.href}`,
             {
               token: cookies.accessToken,
             },
@@ -53,7 +53,7 @@ function App() {
           }
         } catch (err) {
           if (err.response.data.status === "fail") {
-            window.location.href = `http://localhost:3000/?redirectURL=${window.location.href}`;
+            window.location.href = `${process.env.REACT_APP_SSO_LOGIN}/?redirectURL=${window.location.href}`;
           }
         }
       }

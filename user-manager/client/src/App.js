@@ -24,13 +24,13 @@ function App() {
   useEffect(() => {
     (async function checkCookie() {
       if (!cookies.accessToken) {
-        window.location.href = `http://localhost:3000/?redirectURL=${window.location.href}`;
+        window.location.href = `${process.env.REACT_APP_SSO_LOGIN}/?redirectURL=${window.location.href}`;
       }
       if (cookies.accessToken) {
         try {
           let userIP = await getIP();
           let response = await axios.post(
-            `http://localhost:3001/verifyToken/?url=${window.location.href}`,
+            `${process.env.REACT_APP_SSO_API}/verifyToken/?url=${window.location.href}`,
             {
               token: cookies.accessToken,
             },
@@ -46,7 +46,7 @@ function App() {
         } catch (err) {
           console.log(err);
           if (err.response.data.status === "fail") {
-            window.location.href = `http://localhost:3000/?redirectURL=${window.location.href}`;
+            window.location.href = `${process.env.REACT_APP_SSO_LOGIN}/?redirectURL=${window.location.href}`;
           }
         }
       }
@@ -56,7 +56,7 @@ function App() {
     try {
       let userIP = await getIP();
       let usersData = await axios.get(
-        `http://localhost:4000/users/?url=${window.location.href}`,
+        `${process.env.REACT_APP_USER_API}/users/?url=${window.location.href}`,
         { headers: { authorization: `Bearer ${cookies.accessToken}`, ip: userIP } }
       );
       console.log(usersData.data);
@@ -65,7 +65,7 @@ function App() {
       }
     } catch (err) {
       if (err.response.data.status === "token fail") {
-        window.location.href = `http://localhost:3000/?redirectURL=${window.location.href}`;
+        window.location.href = `${process.env.REACT_APP_SSO_LOGIN}/?redirectURL=${window.location.href}`;
       } else {
         alert(err.response.data.message);
       }
@@ -88,7 +88,7 @@ function App() {
     try {
       let userIP = await getIP();
       const data = await axios.delete(
-        `http://localhost:4000/users/${id}/?url=${window.location.href}`,
+        `${process.env.REACT_APP_USER_API}/users/${id}/?url=${window.location.href}`,
         {
           headers: { authorization: `Bearer ${cookies.accessToken}` , ip: userIP},
         }
@@ -98,7 +98,7 @@ function App() {
     } catch (err) {
       console.log(err.response);
       if (err.response.data.status === "token fail") {
-        window.location.href = `http://localhost:3000/?redirectURL=${window.location.href}`;
+        window.location.href = `${process.env.REACT_APP_SSO_LOGIN}/?redirectURL=${window.location.href}`;
       } else {
         console.log(err.response);
       }

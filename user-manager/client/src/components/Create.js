@@ -24,7 +24,7 @@ export default function Create({ setUsers, setCreateMode, users }) {
       let userIP = await getIP();
       values.user_password = sha256(values.user_password + "alotech");
       const data = await axios.post(
-        `http://localhost:4000/users/?url=${window.location.href}`,
+        `${process.env.REACT_APP_USER_API}/users/?url=${window.location.href}`,
         {
           username: values.username,
           user_name: values.user_name,
@@ -43,7 +43,7 @@ export default function Create({ setUsers, setCreateMode, users }) {
       console.log(err);
       values.user_password = "";
       if (err.response.data.status === "token fail") {
-        window.location.href = `http://localhost:3000/?redirectURL=${window.location.href}`;
+        window.location.href = `${process.env.REACT_APP_SSO_LOGIN}/?redirectURL=${window.location.href}`;
       } else {
         alert(err.response.data.message);
       }
