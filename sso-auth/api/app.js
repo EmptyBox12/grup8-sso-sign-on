@@ -48,7 +48,7 @@ logger.token("host", function (req, res) {
 
 //Info logging
 app.use(
-  logger("[:date[clf]] :method :url :status :referrer :host :user-type", {
+  logger("[:date[clf]] :method :url :status :referrer :host", {
     stream: infoWriter,
   })
 );
