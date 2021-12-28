@@ -1,17 +1,13 @@
 const express = require("express");
 const router = express.Router();
-//joi:istekleklerdeki gerekliliklerde yardımcı olur.mesela username alanı eksikse post istediği yapt
-//yaparsak mesaj olarak döner.
-
 const Joi = require("joi");
 const validateRequest = require("../_middleware/validate-request");
 const Role = require("../_helpers/role");
 const userService = require("./user.service");
 // routes
-
 router.get("/", getAll);
 router.get("/:id", getById);
-router.post("/", createSchema, create); //schema fonksiyonunu cagırarak gelen datanın uygun olup olmadıgına bakıyorum
+router.post("/", createSchema, create);
 router.put("/:id", updateSchema, update);
 router.delete("/:id", _delete);
 

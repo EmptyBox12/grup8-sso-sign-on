@@ -8,7 +8,8 @@ module.exports = {
   update,
   delete: _delete,
 };
-//databaseden tüm kayıtları listele
+//Lists all records from database
+
 async function getAll() {
   const users = await db.sequelize.query(
     "call getAll()",
@@ -23,7 +24,7 @@ async function getAll() {
   users.forEach((user) => delete user.user_password);
   return users;
 }
-//id e göre
+//pull user data with user Id parameter.
 async function getById(id) {
   const user = await db.sequelize.query(
     "call getById(?)",
@@ -36,7 +37,7 @@ async function getById(id) {
       }
     }
   );
-  console.log;
+  //if response of database is empty,throw error.
   if (!user[0]) {
     throw new Error("User not found.");
   } else {
@@ -44,8 +45,9 @@ async function getById(id) {
     return user;
   }
 }
-
+//user create function
 async function create(params) {
+  //hashing
   const password = await bcrypt.hash(params.user_password, 10);
   const users = await db.sequelize.query("call getAll()");
   users.forEach((user) => {
@@ -81,7 +83,6 @@ async function create(params) {
     }
   );
 }
-
 async function update(id, params) {
   const users = await db.sequelize.query("call getAll()");
   users.forEach((user) => {
@@ -119,7 +120,7 @@ async function update(id, params) {
     }
   );
 }
-//silme işlemi
+//Deletion processes
 async function _delete(id) {
   return await db.sequelize.query(
     "call delete_user(?)",
