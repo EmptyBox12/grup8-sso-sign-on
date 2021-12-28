@@ -21,6 +21,6 @@ module.exports = async (req, res, next) => {
       next();
     }
   } catch (err) {
-    return res.status(400).json({status: "token fail", msg: "Invald token"});
+    return res.status(400).json({status: "token fail", msg: "Invalid token"});
   }
 };
