@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "node ./server.js",
-    "start:dev": "nodemon ./server.js",
-    "test": "jest"
+    "start": "node ./app.js",
+    "dev": "nodemon ./app.js",
+    "test": "jest --testTimeout=10000"
   },
   "author": "ayca",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.24.0",
     "bcryptjs": "^2.4.3",
     "connect": "^3.7.0",
     "cors": "^2.8.5",
@@ -21,7 +22,9 @@
     "sequelize": "^6.3.4"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "jest": "^27.4.5",
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.15",
+    "supertest": "^6.1.6"
   }
 }

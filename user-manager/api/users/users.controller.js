@@ -2,14 +2,16 @@ const express = require("express");
 const router = express.Router();
 const Joi = require("joi");
 const validateRequest = require("../_middleware/validate-request");
+const authMiddleware = require("../_middleware/authMiddleware");
 const Role = require("../_helpers/role");
 const userService = require("./user.service");
 // routes
-router.get("/", getAll);
-router.get("/:id", getById);
-router.post("/", createSchema, create);
-router.put("/:id", updateSchema, update);
-router.delete("/:id", _delete);
+router.get("/", authMiddleware, getAll);
+router.get("/:id",authMiddleware, getById);
+router.post("/", authMiddleware, createSchema, create); //schema fonksiyonunu cagırarak gelen datanın uygun olup olmadıgına bakıyorum
+router.put("/:id",authMiddleware, updateSchema, update);
+router.delete("/:id", authMiddleware, _delete);
+
 
 module.exports = router;
 
