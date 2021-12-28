@@ -14,50 +14,49 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-// access writer
-class AccessStream extends Writable {
+// info writer
+class InfoStream extends Writable {
   write(line) {
-    //export 'S'uccess queries to logs table
+	 //export info level queries to logs table
     db.query(
-      `INSERT INTO logs (LOG_INFO, ACCESS) VALUES ('${line}', 'Success')`,
+      `INSERT INTO logs (LOG, Level) VALUES ('${line}', 'Info')`,
       (err) => {
         if (err) throw err;
       }
     );
   }
 }
-let successWriter = new AccessStream();
+let infoWriter = new InfoStream();
 
 // error writer
-class ErrorStream extends Writable {
+class DebugStream extends Writable {
   write(line) {
-    //export 'E'rror queries to logs table
+	  //export debug level queries to logs table
     db.query(
-      `INSERT INTO logs (LOG_INFO, ACCESS) VALUES ('${line}', 'Error')`,
+      `INSERT INTO logs (LOG, Level) VALUES ('${line}', 'Debug')`,
       (err) => {
         if (err) throw err;
       }
     );
-    console.log("Error:" + line);
   }
 }
-let errorWriter = new ErrorStream();
-const skipSuccess = (req, res) => res.statusCode < 400;
-const skipError = (req, res) => res.statusCode >= 400;
+let debugWriter = new DebugStream();
 
-//error logging
+logger.token("host", function (req, res) {
+  return req.headers["host"];
+});
+
+//Info logging
 app.use(
-  logger("combined", {
-    skip: skipSuccess,
-    stream: errorWriter,
+  logger("[:date[clf]] :method :url :status :referrer :host", {
+    stream: infoWriter,
   })
 );
 
-//success logging
+// Debug logging
 app.use(
   logger("combined", {
-    skip: skipError,
-    stream: successWriter,
+    stream: debugWriter,
   })
 );
 
