@@ -11,7 +11,7 @@ function model(sequelize) {
     user_email: { type: DataTypes.STRING, allowNull: false },
     user_type: { type: DataTypes.STRING, allowNull: false },
   };
-  //password bilgi olarak dönmesini istemediğim için devre dışı bıraktım.(postmandede gözükmüyor)
+  //Password is disabled because we dont't want it to be returned as information.
   const options = {
     defaultScope: {
       // exclude password hash by default.
@@ -22,6 +22,6 @@ function model(sequelize) {
       withHash: { attributes: {} },
     },
   };
-  //sequlazi define ederek tablo oluşturdum.
+  //We created a table in the database with define function of sequelize.
   return sequelize.define("User", attributes, options);
 }
