@@ -6,7 +6,7 @@ import "./App.css";
 function App() {
   const [cookies] = useCookies(["accessToken"]);
   const [userInfo, setUserInfo] = useState("");
-
+  //get client ip
   async function getIP() {
     let response = await axios.get("http://api.ipify.org/?format=json");
     let userIP = response.data.ip;
@@ -27,7 +27,7 @@ function App() {
       }
     }
   }
-
+  //check token, redirect if necessary or display user info
   useEffect(() => {
     (async function checkCookie() {
       if (!cookies.accessToken) {

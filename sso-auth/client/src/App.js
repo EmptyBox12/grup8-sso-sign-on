@@ -10,7 +10,7 @@ function App() {
   const [password, setPassword] = useState("");
   const [checkQuery, setCheckQuery] = useState(false);
   const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
-
+  //get user ip
   async function getIP() {
     let response = await axios.get("http://api.ipify.org/?format=json");
     let userIP = response.data.ip;
@@ -28,7 +28,7 @@ function App() {
       setCheckQuery(true);
     }
   }, []);
-
+  //verify token and redirect or login
   useEffect(() => {
     if (checkQuery) {
       (async function checkCookie() {
@@ -61,7 +61,7 @@ function App() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    //should get salt from an api
+    //initial hashing. it gets hashed in the back-end one more time
     let salt = "alotech";
     let hashedPass = sha256(password + salt);
     try {
@@ -78,6 +78,7 @@ function App() {
       );
       let loginInfo = loginData.data;
       if (loginInfo.status === "success") {
+        //if login is successful set cookie and redirect
         setCookie("accessToken", loginInfo.accessToken, { path: "/" });
         window.location.href = query;
       }

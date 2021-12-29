@@ -20,7 +20,7 @@ function App() {
     let userIP = response.data.ip;
     return userIP;
   }
-
+//check access token
   useEffect(() => {
     (async function checkCookie() {
       if (!cookies.accessToken) {
@@ -71,7 +71,7 @@ function App() {
       }
     }
   }
-
+//get list of users if access token is valid
   useEffect(() => {
     if (loggedIn === true) {
       (async function getListOfUsers() {
