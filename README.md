@@ -13,6 +13,9 @@ Proje Ataberk Tümay, Ayça Ataşer, Semih Durgun ve Oğuzhan Çevik grubu taraf
 Projede amaç SSO mantığına uygun yani bir siteye giriş yapıldığında yetki ve diğer bazı kriterler sağlanıyorsa
 tekrar login olmadan giriş yapabildiğimiz, authorization ve login işlemlerinin tek yerden kontrol edildiği bir proje yapmaktır.
 
+Front-end: React.js
+Back-end: Node.js, Express.js
+Database: Mysql
 
 ## Kurulum ve Konfigürasyon
 
