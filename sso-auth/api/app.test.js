@@ -5,22 +5,48 @@ const authRoute = require("./routes/authRoute");
 
 app.use("/", authRoute);
 
+beforeAll(() => {
+  db.query(
+    `insert into users (username,user_name,user_surname,user_password,user_email, user_type,createdAt,updatedAt) VALUES ('11adminTest','11admin', '11surname', '$2a$10$A3Yoyj3T.xt2DuKaKQ2qgeLsnL3.H12VztcQirbS2zqhGS87pA5/q', 'testadmin@tst.com','admin', '2021-12-26 01:48:41', '2021-12-26 01:48:41')`
+  );
+  db.query(
+    `insert into users (username,user_name,user_surname,user_password,user_email, user_type,createdAt,updatedAt) VALUES ('11userTest','11user', '11surname', '$2a$10$A3Yoyj3T.xt2DuKaKQ2qgeLsnL3.H12VztcQirbS2zqhGS87pA5/q', 'testuser@tst.com','user', '2021-12-26 01:48:41', '2021-12-26 01:48:41')`
+  );
+  db.query(
+    "SELECT id from users WHERE username = '11adminTest'",
+    (err, results, fields) => {
+      let id = results[0].id;
+      console.log(id);
+      db.query(
+        `INSERT INTO token (user_id, token, expire_date, url, ip) VALUES ('${id}', 'c62962cb-6c1c-4397-a9bb-d2b81b5fc1da','2030-12-28 18:41:53', 'localhost:3010, localhost:3020', '176.234.231.250')`
+      );
+      db.query(
+        `INSERT INTO token (user_id, token, expire_date, url, ip) VALUES ('${id}', '5a6bd5b0-888d-4776-8f85-f40fd6d9bff4','2021-12-20 18:41:53', 'localhost:3010, localhost:3020', '176.234.231.250')`
+      );
+      db.query(
+        `INSERT INTO token (user_id, token, expire_date, url, ip) VALUES ('${id}', 'f2a3897c-7a81-4f8d-82f1-92ccdfad87f0','2030-12-28 18:41:53', 'localhost:3010', '176.234.231.250')`
+      );
+    }
+  );
+});
+
 afterAll(() => {
+  db.query("DELETE from users WHERE username = '11adminTest'");
+  db.query("DELETE from users WHERE username = '11userTest'");
+  db.query(
+    "DELETE from token WHERE token = 'c62962cb-6c1c-4397-a9bb-d2b81b5fc1da'"
+  );
+  db.query(
+    "DELETE from token WHERE token = '5a6bd5b0-888d-4776-8f85-f40fd6d9bff4'"
+  );
+  db.query(
+    "DELETE from token WHERE token = 'f2a3897c-7a81-4f8d-82f1-92ccdfad87f0'"
+  );
   db.end();
 });
+
 describe("login", () => {
-  beforeAll(() => {
-    db.query(
-      `insert into users (username,user_name,user_surname,user_password,user_email, user_type,createdAt,updatedAt) VALUES ('11adminTest','11admin', '11surname', '$2a$10$A3Yoyj3T.xt2DuKaKQ2qgeLsnL3.H12VztcQirbS2zqhGS87pA5/q', 'testadmin@tst.com','admin', '2021-12-26 01:48:41', '2021-12-26 01:48:41')`
-    );
-    db.query(
-      `insert into users (username,user_name,user_surname,user_password,user_email, user_type,createdAt,updatedAt) VALUES ('11userTest','11user', '11surname', '$2a$10$A3Yoyj3T.xt2DuKaKQ2qgeLsnL3.H12VztcQirbS2zqhGS87pA5/q', 'testuser@tst.com','user', '2021-12-26 01:48:41', '2021-12-26 01:48:41')`
-    );
-  });
-  afterAll(() => {
-    db.query("DELETE from users WHERE username = '11adminTest'");
-    db.query("DELETE from users WHERE username = '11userTest'");
-  });
+
   describe("login without credentials", () => {
     test("should return, user not found without username ", async () => {
       const response = await request(app)
@@ -94,28 +120,7 @@ describe("login", () => {
 });
 
 describe("verify token", () => {
-  beforeAll(() => {
-    db.query(
-      `INSERT INTO token (user_id, token, expire_date, url, ip) VALUES ('16', 'c62962cb-6c1c-4397-a9bb-d2b81b5fc1da','2030-12-28 18:41:53', 'localhost:3010, localhost:3020', '176.234.231.250')`
-    );
-    db.query(
-      `INSERT INTO token (user_id, token, expire_date, url, ip) VALUES ('16', '5a6bd5b0-888d-4776-8f85-f40fd6d9bff4','2021-12-20 18:41:53', 'localhost:3010, localhost:3020', '176.234.231.250')`
-    );
-    db.query(
-      `INSERT INTO token (user_id, token, expire_date, url, ip) VALUES ('16', 'f2a3897c-7a81-4f8d-82f1-92ccdfad87f0','2030-12-28 18:41:53', 'localhost:3010', '176.234.231.250')`
-    );
-  });
-  afterAll(() => {
-    db.query(
-      "DELETE from token WHERE token = 'c62962cb-6c1c-4397-a9bb-d2b81b5fc1da'"
-    );
-    db.query(
-      "DELETE from token WHERE token = '5a6bd5b0-888d-4776-8f85-f40fd6d9bff4'"
-    );
-    db.query(
-      "DELETE from token WHERE token = 'f2a3897c-7a81-4f8d-82f1-92ccdfad87f0'"
-    );
-  });
+
   test("should verify if token is valid", async () => {
     const response = await request(app)
       .post("/verifyToken/?url=http://localhost:3010/")

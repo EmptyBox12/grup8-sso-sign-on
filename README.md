@@ -67,10 +67,10 @@ localhost:3020 ve localhost:3010 sizi login sayfasına yönlendirmelidir.
 `insert into users
 (username,user_name,user_surname,user_password,user_email, user_type,createdAt,updatedAt)
  VALUES
-('admin','name', 'surname', '$2a$10$A3Yoyj3T.xt2DuKaKQ2qgeLsnL3.H12VztcQirbS2zqhGS87pA5/q', 'test@test.com','admin', '2021-12-26 01:48:41', '2021-12-26 01:48:41')`
+('adminDefault','name', 'surname', '$2a$10$ZvEsJTw7rOTZz8OWYzSeIesn8vGIBCdWhGaVO5LBc02l5wzKMZtY6', 'test@test.com','admin', '2021-12-26 01:48:41', '2021-12-26 01:48:41')`
 ```
 
-Bu komutu girerseniz size kullanıcı adı admin, şifresi pass123 olan bir admin hesabı üretecektir.
+Bu komutu girerseniz size kullanıcı adı adminDefault, şifresi pass123 olan bir admin hesabı üretecektir.
 
 Bu hesapla giriş yapabilirsiniz.
 
