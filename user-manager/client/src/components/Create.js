@@ -7,7 +7,7 @@ import * as Yup from "yup";
 
 export default function Create({ setUsers, setCreateMode, users }) {
   const [cookies] = useCookies(["accessToken"]);
-
+  //get user ip
   async function getIP() {
     try{
       let response = await axios.get("http://api.ipify.org/?format=json");
@@ -22,7 +22,9 @@ export default function Create({ setUsers, setCreateMode, users }) {
   async function handleCreate(values) {
     try {
       let userIP = await getIP();
+      //initial hashing of the password. 
       values.user_password = sha256(values.user_password + "alotech");
+      //post request to create route of user-manager/api
       const data = await axios.post(
         `${process.env.REACT_APP_USER_API}/users/?url=${window.location.href}`,
         {
@@ -43,6 +45,7 @@ export default function Create({ setUsers, setCreateMode, users }) {
       console.log(err);
       values.user_password = "";
       if (err.response.data.status === "token fail") {
+        //redirect to login if token is invalid
         window.location.href = `${process.env.REACT_APP_SSO_LOGIN}/?redirectURL=${window.location.href}`;
       } else {
         alert(err.response.data.message);

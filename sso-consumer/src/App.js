@@ -12,7 +12,7 @@ function App() {
     let userIP = response.data.ip;
     return userIP;
   }
-
+  //function to get user information
   async function getUser(id, userIP) {
     try {
       let usersData = await axios.get(`${process.env.REACT_APP_USER_API}/users/${id}/?url=${window.location.href}`, {
@@ -36,6 +36,7 @@ function App() {
       if (cookies.accessToken) {
         try {
           let userIP = await getIP();
+          //check if token is valid
           let response = await axios.post(
             `${process.env.REACT_APP_SSO_API}/verifyToken/?url=${window.location.href}`,
             {
@@ -53,6 +54,7 @@ function App() {
           }
         } catch (err) {
           if (err.response.data.status === "fail") {
+            //redirect to login if token is not valid
             window.location.href = `${process.env.REACT_APP_SSO_LOGIN}/?redirectURL=${window.location.href}`;
           }
         }

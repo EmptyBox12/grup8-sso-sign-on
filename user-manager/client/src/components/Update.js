@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useCookies } from "react-cookie";
-import { Formik, useFormik } from "formik";
+import { useFormik } from "formik";
 import sha256 from "js-sha256";
 import * as Yup from "yup";
 //implement yup
@@ -10,7 +10,7 @@ export default function Update({ setUsers, updateMode, users, setUpdateMode }) {
   const [cookies] = useCookies(["accessToken"]);
   let id = updateMode.id;
   let index = users.findIndex((item) => item.id === id);
-
+  //get user ip
   async function getIP() {
     let response = await axios.get("http://api.ipify.org/?format=json");
     let userIP = response.data.ip;
@@ -20,7 +20,9 @@ export default function Update({ setUsers, updateMode, users, setUpdateMode }) {
   async function handleUpdate(id, values) {
     try {
       let userIP = await getIP();
+      //initial hashing
       values.user_password = sha256(values.user_password + "alotech");
+      //put request to the users route of user-manager/api
       const data = await axios.put(
         `${process.env.REACT_APP_USER_API}/users/${id}/?url=${window.location.href}`,
         {
@@ -41,6 +43,7 @@ export default function Update({ setUsers, updateMode, users, setUpdateMode }) {
     } catch (err) {
       values.user_password = "";
       if (err.response.data.status === "token fail") {
+        //redirect to login page if token fails
         window.location.href = `${process.env.REACT_APP_SSO_LOGIN}/?redirectURL=${window.location.href}`;
       } else {
         alert(err.response.data.message);

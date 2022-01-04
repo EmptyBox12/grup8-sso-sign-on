@@ -16,7 +16,7 @@ function App() {
     let userIP = response.data.ip;
     return userIP;
   }
-
+  //clean query
   function cleanUrl() {
     let url = window.location.search;
     let cleanUrl = url.split("=")[1];
@@ -36,6 +36,7 @@ function App() {
           console.log(cleanUrl());
           try {
             let userIP = await getIP();
+            //verify if token is valid
             let response = await axios.post(
               `http://localhost:3001/verifyToken/?url=${cleanUrl()}`,
               {
@@ -48,6 +49,7 @@ function App() {
               }
             );
             if (response.data.status === "success") {
+              //if token is valid redirect back to the query url
               let query = window.location.search.substring(1).split("=")[1];
               window.location.href = query;
             }

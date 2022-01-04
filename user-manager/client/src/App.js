@@ -14,7 +14,7 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [updateMode, setUpdateMode] = useState({ show: false, id: 0 });
   const [createMode, setCreateMode] = useState(false);
-
+  //get user ip
   async function getIP() {
     let response = await axios.get("http://api.ipify.org/?format=json");
     let userIP = response.data.ip;
@@ -29,6 +29,7 @@ function App() {
       if (cookies.accessToken) {
         try {
           let userIP = await getIP();
+          //verify if token is valid
           let response = await axios.post(
             `${process.env.REACT_APP_SSO_API}/verifyToken/?url=${window.location.href}`,
             {
@@ -46,12 +47,14 @@ function App() {
         } catch (err) {
           console.log(err);
           if (err.response.data.status === "fail") {
+            //redirect to login if token is invalid
             window.location.href = `${process.env.REACT_APP_SSO_LOGIN}/?redirectURL=${window.location.href}`;
           }
         }
       }
     })();
   }, []);
+  //function to get list of users from user-manager/api
   async function getUsers() {
     try {
       let userIP = await getIP();
@@ -71,7 +74,7 @@ function App() {
       }
     }
   }
-//get list of users if access token is valid
+//if loggedin state is true - get list of users
   useEffect(() => {
     if (loggedIn === true) {
       (async function getListOfUsers() {
@@ -82,11 +85,13 @@ function App() {
         }
       })();
     }
+    //get list of users everytime users state changes
   }, [loggedIn, users]);
 
   async function handleDelete(id) {
     try {
       let userIP = await getIP();
+      //delete user
       const data = await axios.delete(
         `${process.env.REACT_APP_USER_API}/users/${id}/?url=${window.location.href}`,
         {
@@ -97,6 +102,7 @@ function App() {
       setUsers(newUsers);
     } catch (err) {
       console.log(err.response);
+      //redirect to login if token is invalid
       if (err.response.data.status === "token fail") {
         window.location.href = `${process.env.REACT_APP_SSO_LOGIN}/?redirectURL=${window.location.href}`;
       } else {
